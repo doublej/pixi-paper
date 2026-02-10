@@ -36,6 +36,6 @@ declare module "$app/types" {
 		};
 		Pathname(): "/";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): "/.nojekyll" | "/icon.svg" | "/robots.txt" | string & {};
+		Asset(): "/.nojekyll" | "/compare.html" | "/icon.svg" | "/index.html" | "/robots.txt" | "/stress.html" | string & {};
 	}
 }

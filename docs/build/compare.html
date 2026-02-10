@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML to Canvas Library Comparison</title>
+    <meta name="description" content="Side-by-side comparison of html2canvas, html-to-image, modern-screenshot, and Satori for HTML to canvas/image conversion">
+    <meta name="keywords" content="html, canvas, screenshot, html2canvas, html-to-image, modern-screenshot, satori, comparison">
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        background: #1a1a1a;
+        min-height: 100vh;
+        padding: 20px;
+        font-family: system-ui, -apple-system, sans-serif;
+        color: #fff;
+      }
+      h1 { text-align: center; margin-bottom: 30px; }
+      .comparison-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+      .comparison-item {
+        background: #2a2a2a;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+      .comparison-item h3 {
+        margin-bottom: 10px;
+        color: #4a9eff;
+      }
+      .comparison-item .meta {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 15px;
+      }
+      .comparison-item .result {
+        background: #fff;
+        border-radius: 8px;
+        width: 320px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+      }
+      .comparison-item .result img,
+      .comparison-item .result canvas {
+        width: 320px !important;
+        height: 200px !important;
+        object-fit: contain;
+      }
+      /* Diff overlay - cloned original behind each result */
+      .comparison-item .result .diff-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 320px;
+        height: 200px;
+        pointer-events: none;
+        opacity: 0;
+      }
+      .diff-mode .comparison-item .result .diff-overlay {
+        opacity: 1;
+      }
+      .diff-mode .comparison-item .result img,
+      .diff-mode .comparison-item .result canvas {
+        mix-blend-mode: difference;
+      }
+      /* Comparison tools */
+      .tools {
+        background: #333;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .tools label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+      .tools input[type="range"] {
+        width: 120px;
+      }
+      .tools button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background: #4a9eff;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .tools button:hover {
+        background: #3a8eef;
+      }
+      .tools .info {
+        font-size: 12px;
+        color: #888;
+        padding: 4px 10px;
+        background: #222;
+        border-radius: 4px;
+      }
+      .comparison-item .timing {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #aaa;
+      }
+      .comparison-item .status {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-top: 8px;
+      }
+      .status.success { background: #2d5a2d; color: #8f8; }
+      .status.error { background: #5a2d2d; color: #f88; }
+      .status.loading { background: #5a5a2d; color: #ff8; }
+
+      /* Source HTML styling - FIXED SIZE for comparison */
+      #source-html {
+        width: 320px;
+        height: 200px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #333;
+        box-sizing: border-box;
+      }
+      #source-html h2 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 20px;
+      }
+      #source-html p {
+        margin: 0;
+        color: #666;
+        line-height: 1.5;
+      }
+      #source-html .quote-box {
+        margin-top: 15px;
+        padding: 10px;
+        background: #f5f5f5;
+        border-left: 3px solid #4a9eff;
+      }
+      .comparison-item .result img,
+      .comparison-item .result canvas {
+        width: 320px;
+        height: 200px;
+        object-fit: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>HTML → Image Library Comparison</h1>
+
+    <div class="tools">
+      <span class="info" id="pixel-ratio">DPR: -</span>
+      <span class="info" id="render-size">Render: 320×200 @ -x</span>
+      <button id="btn-rerun">Re-run Tests</button>
+      <button id="btn-toggle-diff">Toggle Diff Mode</button>
+      <label>
+        Zoom:
+        <input type="range" id="zoom" min="1" max="4" step="0.5" value="1">
+        <span id="zoom-value">1x</span>
+      </label>
+    </div>
+
+    <div class="comparison-grid">
+      <!-- Original HTML -->
+      <div class="comparison-item">
+        <h3>Original HTML</h3>
+        <div class="meta">Reference - Direct DOM rendering</div>
+        <div class="result">
+          <div id="source-html">
+            <h2 style="font-family: Georgia, serif; letter-spacing: -1px; font-size: 18px; font-weight: 900; border-bottom: 2px solid #111; padding-bottom: 4px;">THE DAILY SHADER</h2>
+            <p style="font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: #888; margin: 4px 0 6px; font-weight: 300;">Vol. XII ~ No. 7 ~ Price 5¢</p>
+            <p style="font-family: Georgia, serif; font-size: 11px; line-height: 1.4; text-align: justify; font-weight: 400;">
+              <span style="font-size: 24px; float: left; line-height: 0.75; margin-right: 3px; font-weight: 700;">S</span>cientists <span style="font-weight: 700; letter-spacing: 0.5px;">STUNNED</span> as WebGL transforms pixels.
+            </p>
+            <div style="display: flex; gap: 8px; margin-top: 6px; font-size: 9px;">
+              <div style="flex: 1; color: #444; font-weight: 600; letter-spacing: -0.3px;">"Remarkable!"</div>
+              <div style="flex: 1; color: #666; font-weight: 300; font-style: italic; letter-spacing: 0.5px;">Critics skeptical.</div>
+            </div>
+            <div style="margin-top: 6px; font-size: 8px; letter-spacing: 3px; text-align: center; font-weight: 200; color: #aaa; text-transform: uppercase;">~ advertisement ~</div>
+            <div style="padding: 5px; background: #f5f5f5; border: 1px dashed #999; font-family: monospace; font-size: 8px; letter-spacing: 1px; transform: rotate(-0.5deg); font-weight: 500;">
+              <span style="font-weight: 700; letter-spacing: 2px;">WANTED:</span> Shader dev. Call GL-4096
+            </div>
+          </div>
+        </div>
+        <div class="timing">Baseline reference</div>
+      </div>
+
+      <!-- html2canvas -->
+      <div class="comparison-item">
+        <h3>html2canvas</h3>
+        <div class="meta">v1.4.1 • Most popular • Renders DOM to Canvas</div>
+        <div class="result" id="result-html2canvas"></div>
+        <div class="timing" id="timing-html2canvas">Loading...</div>
+        <span class="status loading" id="status-html2canvas">Rendering...</span>
+      </div>
+
+      <!-- html-to-image -->
+      <div class="comparison-item">
+        <h3>html-to-image</h3>
+        <div class="meta">v1.11.11 • Modern • SVG foreignObject</div>
+        <div class="result" id="result-html-to-image"></div>
+        <div class="timing" id="timing-html-to-image">Loading...</div>
+        <span class="status loading" id="status-html-to-image">Rendering...</span>
+      </div>
+
+      <!-- modern-screenshot -->
+      <div class="comparison-item">
+        <h3>modern-screenshot</h3>
+        <div class="meta">v4.5.0 • Latest • Multiple backends</div>
+        <div class="result" id="result-modern-screenshot"></div>
+        <div class="timing" id="timing-modern-screenshot">Loading...</div>
+        <span class="status loading" id="status-modern-screenshot">Rendering...</span>
+      </div>
+
+      <!-- Satori -->
+      <div class="comparison-item">
+        <h3>Satori (Vercel)</h3>
+        <div class="meta">v0.18.3 • JSX to SVG • Needs font files</div>
+        <div class="result" id="result-satori"></div>
+        <div class="timing" id="timing-satori">Loading...</div>
+        <span class="status loading" id="status-satori">Rendering...</span>
+      </div>
+    </div>
+
+    <script type="module" src="/src/compare.ts"></script>
+  </body>
+</html>
