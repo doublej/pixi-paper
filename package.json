@@ -1,0 +1,24 @@
+{
+  "name": "pixi-paper",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5847",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "pixi.js": "^8.14.3",
+    "satori": "^0.18.3",
+    "satori-html": "^0.3.2",
+    "@resvg/resvg-wasm": "^2.6.2",
+    "html2canvas": "^1.4.1",
+    "html-to-image": "^1.11.11",
+    "modern-screenshot": "^4.5.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.0.3"
+  },
+  "description": "Real-time comparison of HTML to Canvas/Image screenshot libraries: html2canvas, html-to-image, modern-screenshot, and Satori"
+}

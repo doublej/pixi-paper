@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixi Paper - HTML to Canvas Screenshot Demo</title>
+    <meta name="description" content="Real-time demo of HTML to Canvas screenshotting with various libraries and effects">
+    <meta name="keywords" content="html, canvas, screenshot, html2canvas, pixijs, webgl, rendering">
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        background: #2a2a2a;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      h1 { color: #fff; margin-bottom: 20px; }
+      #app {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      }
+      #source-html {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 300px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        font-size: 14px;
+      }
+      .controls {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+      }
+      .controls button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        background: #4a9eff;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .controls button:hover {
+        background: #3a8eef;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>HTML to Printed Paper Effect</h1>
+    <div id="app"></div>
+
+    <!-- Source HTML to be rendered -->
+    <div id="source-html">
+      <h1 style="font-family: Georgia, serif; font-size: 32px; letter-spacing: -1px; margin-bottom: 5px; color: #111;">THE DAILY SHADER</h1>
+      <div style="font-size: 10px; color: #888; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px;">Est. 2024 ~ Vol. XLII No. 7</div>
+
+      <h2 style="font-family: Georgia, serif; font-size: 18px; font-weight: bold; color: #222; margin-bottom: 8px; line-height: 1.2;">Scientists Discover WebGL Can Print Anything</h2>
+
+      <p style="font-family: Georgia, serif; font-size: 12px; color: #444; line-height: 1.6; text-align: justify; margin-bottom: 10px;">
+        <span style="font-size: 24px; float: left; line-height: 1; margin-right: 4px; font-weight: bold;">L</span>ocal developers were stunned yesterday when researchers announced breakthrough shader technology capable of transforming digital content into vintage print.
+      </p>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div style="flex: 1; font-size: 11px; color: #555; line-height: 1.5;">
+          "The implications are enormous," said Dr. Fragment, lead researcher at the Institute of Pixel Studies.
+        </div>
+        <div style="flex: 1; font-size: 11px; color: #555; line-height: 1.5;">
+          Critics remain skeptical, citing performance concerns on older GPUs.
+        </div>
+      </div>
+
+      <div style="background: #f0f0f0; padding: 8px; border: 1px dashed #999; font-family: monospace; font-size: 10px; letter-spacing: 1px;">
+        CLASSIFIED AD: WebGL developer wanted. Must love noise functions. Call GL-4096
+      </div>
+
+      <div style="margin-top: 10px; font-size: 9px; color: #999; text-align: right; font-style: italic;">
+        Continued on page A7...
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="btn-refresh">Refresh Render</button>
+      <button id="btn-toggle-filter">Toggle Filter</button>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
